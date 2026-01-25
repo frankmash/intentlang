@@ -1,25 +1,28 @@
+Here is a cleaned-up and properly structured version of your **README.md** content:
+
+```markdown
 # IntentLang
 
-IntentLang is a lightweight, **rule-based** programming language designed for expressing  
+**IntentLang** is a lightweight, rule-based programming language designed for expressing  
 **decision logic, policies, and state mutations** outside of application code.
 
 It is built to make business rules, permissions, feature flags, and policies  
 **human-readable, auditable, and safe**.
 
----
+
 
 ## Why IntentLang?
 
-Most applications hard-code decision logic inside JavaScript, Python, etc.
+Most applications hard-code decision logic inside JavaScript, Python, etc.  
 
-**IntentLang** separates **what the system decides** from **how the system runs**.
+**IntentLang** cleanly separates **what the system decides** from **how the system runs**.
 
-This makes systems:
+Benefits:
 
 - Easier to reason about
 - Safer to change
 - Easier to audit
-- Friendlier to non-developers (business analysts, compliance, product, etc.)
+- Friendlier to non-developers (business analysts, compliance, product, legal, etc.)
 
 ---
 
@@ -31,8 +34,9 @@ rule "adult verification" {
   then
     user.is_verified = true
 }
-intent
-Copy code
+```
+
+```intent
 rule "premium discount eligibility" {
   when
     user.country == "KE" and
@@ -41,34 +45,51 @@ rule "premium discount eligibility" {
   then
     order.discount_percentage += 15
 }
-Quick Start
-1. Install
-bash
-Copy code
+```
+
+
+## Quick Start
+
+### 1. Install (from source – for now)
+
+```bash
+git clone <your-repo-url>
+cd intentlang
 pip install -e .
-For now, install from source. PyPI support is planned.
+```
 
-2. Write a rule
-Create a file verify.intent:
+(PyPI package coming soon.)
 
-intent
-Copy code
+### 2. Write a rule file
+
+`verify.intent`:
+
+```intent
 rule "adult verification" {
   when user.age >= 18
   then
     user.is_verified = true
 }
-3. Run from Python
-python
-Copy code
+```
+
+### 3. Run from Python
+
+```python
 from lark import Lark
+
 from intentlang.runtime import run
 from intentlang.transform import ToAST
 from intentlang.grammar import GRAMMAR
 
 rules_text = open("verify.intent").read()
 
-parser = Lark(GRAMMAR, start="start", parser="lalr", transformer=ToAST())
+parser = Lark(
+    GRAMMAR,
+    start="start",
+    parser="lalr",
+    transformer=ToAST()
+)
+
 rules = parser.parse(rules_text)
 
 context = {
@@ -76,10 +97,13 @@ context = {
 }
 
 result = run(rules, context, mode="apply")
+
 print(result)
-Output
-json
-Copy code
+```
+
+**Example output:**
+
+```json
 {
   "matched_rules": ["adult verification"],
   "effects": [
@@ -97,94 +121,81 @@ Copy code
     }
   }
 }
-Core Concepts
-Rules
-A rule consists of:
+```
 
-A name (quoted string)
 
-A condition (when clause)
+## Core Concepts
 
-One or more mutations (then clause)
+### Rules
 
-Conditions
-Conditions are pure expressions:
+Each rule has:
 
-No side effects
+- A name (quoted string)
+- A `when` condition
+- One or more `then` mutations
 
-Deterministic
+### Conditions
 
-Evaluated against the input context
+Pure expressions — no side effects, fully deterministic.
 
-Supported operators:
+**Supported:**
 
-Comparisons: ==, !=, >, >=, <, <=
+- Comparisons: `== != > >= < <=`
+- Logical: `and or`
+- Grouping: `( … )`
 
-Logical: and, or
+### Mutations
 
-Parentheses for grouping
+Describe *intended* state changes (not executed during evaluation).
 
-Mutations
-Mutations describe intended state changes (not immediate execution).
+**Supported operations:**
 
-Supported operations:
+- `path = value`
+- `path += number`
+- `path -= number`
 
-Assignment: =
+Properties: explicit, conflict-checked, only applied by the runtime.
 
-Increment: +=
 
-Decrement: -=
+## Execution Modes
 
-Mutations are:
+| Mode   | Evaluates rules | Returns effects plan | Actually mutates context |
+|--------|------------------|-----------------------|---------------------------|
+| `dry`  | Yes              | No                    | No                        |
+| `plan` | Yes              | Yes                   | No                        |
+| `apply`| Yes              | Yes                   | Yes                       |
 
-Explicit
+Safe by default.
 
-Conflict-checked
 
-Only applied by the runtime (never during evaluation)
 
-Execution Modes
-IntentLang supports three safe-by-default execution modes:
+## Conflict Detection
 
-Mode	Evaluates rules	Returns planned effects	Applies changes
-dry	Yes	No	No
-plan	Yes	Yes	No
-apply	Yes	Yes	Yes
+If multiple rules try to modify the **same path** in one evaluation,  
+IntentLang raises a conflict error instead of overwriting silently.
 
-Conflict Detection
-If two rules try to mutate the same path in a single run, IntentLang raises a
-conflict error instead of silently overwriting.
+Guarantees: **determinism · predictability · safety**
 
-This guarantees:
 
-Determinism
+## Use Cases
 
-Predictability
+Ideal for:
 
-Safety
+- Feature flags & progressive rollouts
+- Permissions / RBAC / ABAC
+- Business rules & approval workflows
+- Pricing, discounts, promotions
+- Game mechanics & progression systems
+- Regulatory / compliance policies
+- AI output filters & safety guardrails
 
-Use Cases
-IntentLang is well-suited for:
+Not meant to replace general-purpose languages.
 
-Feature flags & rollouts
 
-Permissions & role-based access control
 
-Business rules & workflows
+## Architecture Overview
 
-Pricing & discount logic
-
-Game mechanics & progression rules
-
-Policy & compliance engines
-
-AI output guardrails & safety filters
-
-It is not intended to replace general-purpose programming languages.
-
-Architecture Overview
-text
-Copy code
+```
 Text (.intent files)
       ↓
 Parser (Lark)
@@ -196,30 +207,35 @@ Evaluator → condition results (true/false)
 Mutation planner → ordered, conflict-checked plan
       ↓
 Runtime (dry / plan / apply)
-Status
-Version: v0.1 (early development)
+```
 
-Language syntax is mostly stable
 
-Suitable for experimentation and non-critical real-world use
 
-API and tooling are still evolving
+## Status
 
-License
-MIT License — free for personal and commercial use.
+- **Version**: v0.1 (early development)
+- Language syntax mostly stable
+- Suitable for experiments and non-critical production use
+- API and developer tooling still evolving
 
-Philosophy
-IntentLang is intentionally small.
 
-It aims to be:
 
-Understandable
+## License
 
-Composable
+[MIT License](LICENSE) — free for personal and commercial use.
 
-Safe
 
-Boring (in the best possible way)
+## Philosophy
 
-Complexity belongs in applications.
-Decisions belong in rules.
+IntentLang is **intentionally small**.
+
+Goals:
+
+- Understandable
+- Composable
+- Safe
+- Boring (in the best possible way)
+
+**Complexity belongs in applications.**  
+**Decisions belong in rules.**
+```
