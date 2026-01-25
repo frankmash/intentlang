@@ -43,6 +43,64 @@ rule "premium discount eligibility" {
 }
 ```
 
+## Quick Start
+
+### 1. Install
+
+```bash
+pip install -e .
+For now, install from source. PyPI support is planned.
+
+2. Write a rule
+Create a file verify.intent:
+
+intent
+Copy code
+rule "adult verification" {
+  when user.age >= 18
+  then
+    user.is_verified = true
+}
+3. Run from Python
+python
+Copy code
+from lark import Lark
+from intentlang.runtime import run
+from intentlang.transform import ToAST
+from intentlang.grammar import GRAMMAR
+
+rules_text = open("verify.intent").read()
+
+parser = Lark(GRAMMAR, start="start", parser="lalr", transformer=ToAST())
+rules = parser.parse(rules_text)
+
+context = {
+    "user": {"age": 21}
+}
+
+result = run(rules, context, mode="apply")
+print(result)
+Output
+json
+Copy code
+{
+  "matched_rules": ["adult verification"],
+  "effects": [
+    {
+      "op": "set",
+      "path": "user.is_verified",
+      "value": true,
+      "rule": "adult verification"
+    }
+  ],
+  "context": {
+    "user": {
+      "age": 21,
+      "is_verified": true
+    }
+  }
+}
+
 
 ## Core Concepts
 
@@ -167,13 +225,3 @@ It aims to be:
 **Complexity belongs in applications.**  
 **Decisions belong in rules.**
 ```
-
-Feel free to copy-paste the content above into your `README.md` file.
-
-Let me know if you'd like to add sections like:
-
-- Installation
-- Quickstart
-- Syntax reference
-- Roadmap
-- Comparison table (e.g. vs OPA, JsonLogic, etc.)
