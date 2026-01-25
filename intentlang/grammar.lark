@@ -1,0 +1,60 @@
+// ============================
+// ENTRY POINT
+// ============================
+
+start: rule+
+
+// ============================
+// RULES
+// ============================
+
+rule: "rule" STRING "{" when then "}"
+
+when: "when" expr
+then: "then" mutation+
+
+// ============================
+// EXPRESSIONS (READ-ONLY)
+// ============================
+
+?expr: expr "and" expr   -> and_expr
+     | expr "or" expr    -> or_expr
+     | comparison
+     | "(" expr ")"
+
+comparison: path COMP_OP value
+
+
+COMP_OP: "==" | "!=" | ">=" | "<=" | ">" | "<"
+
+// ============================
+// MUTATIONS (STATE CHANGES)
+// ============================
+
+mutation: path MUT_OP value
+
+
+MUT_OP: "=" | "+=" | "-="
+
+// ============================
+// PRIMITIVES
+// ============================
+
+path: IDENT ("." IDENT)*
+
+value: NUMBER
+     | STRING
+     | BOOLEAN
+
+BOOLEAN: "true" | "false"
+
+// ============================
+// TOKENS
+// ============================
+
+IDENT: /[a-zA-Z_][a-zA-Z0-9_]*/
+
+%import common.SIGNED_NUMBER -> NUMBER
+%import common.ESCAPED_STRING -> STRING
+%import common.WS
+%ignore WS

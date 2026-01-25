@@ -1,0 +1,5 @@
+rule "adult verification" {
+  when user.age >= 18
+  then
+    user.is_verified = true
+}
