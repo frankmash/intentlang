@@ -1,4 +1,3 @@
-
 # IntentLang
 
 IntentLang is a lightweight, **rule-based** programming language designed for expressing  
@@ -7,10 +6,11 @@ IntentLang is a lightweight, **rule-based** programming language designed for ex
 It is built to make business rules, permissions, feature flags, and policies  
 **human-readable, auditable, and safe**.
 
+---
 
 ## Why IntentLang?
 
-Most applications hard-code decision logic inside JavaScript, Python, etc.  
+Most applications hard-code decision logic inside JavaScript, Python, etc.
 
 **IntentLang** separates **what the system decides** from **how the system runs**.
 
@@ -21,6 +21,7 @@ This makes systems:
 - Easier to audit
 - Friendlier to non-developers (business analysts, compliance, product, etc.)
 
+---
 
 ## Example
 
@@ -30,9 +31,8 @@ rule "adult verification" {
   then
     user.is_verified = true
 }
-```
-
-```intent
+intent
+Copy code
 rule "premium discount eligibility" {
   when
     user.country == "KE" and
@@ -41,13 +41,10 @@ rule "premium discount eligibility" {
   then
     order.discount_percentage += 15
 }
-```
-
-## Quick Start
-
-### 1. Install
-
-```bash
+Quick Start
+1. Install
+bash
+Copy code
 pip install -e .
 For now, install from source. PyPI support is planned.
 
@@ -100,90 +97,94 @@ Copy code
     }
   }
 }
-
-
-## Core Concepts
-
-### Rules
-
+Core Concepts
+Rules
 A rule consists of:
 
-- A **name** (quoted string)
-- A **condition** (`when` clause)
-- One or more **mutations** (`then` clause)
+A name (quoted string)
 
-### Conditions
+A condition (when clause)
 
-Conditions are **pure expressions**:
+One or more mutations (then clause)
 
-- No side effects
-- Deterministic
-- Evaluated against the input context
+Conditions
+Conditions are pure expressions:
 
-**Supported operators:**
+No side effects
 
-- Comparisons: `==`, `!=`, `>`, `>=`, `<`, `<=`
-- Logical: `and`, `or`
-- Parentheses for grouping
+Deterministic
 
-### Mutations
+Evaluated against the input context
 
-Mutations describe **intended state changes** (not immediate execution).
+Supported operators:
 
-**Supported operations:**
+Comparisons: ==, !=, >, >=, <, <=
 
-- Assignment: `=`
-- Increment: `+=`
-- Decrement: `-=`
+Logical: and, or
+
+Parentheses for grouping
+
+Mutations
+Mutations describe intended state changes (not immediate execution).
+
+Supported operations:
+
+Assignment: =
+
+Increment: +=
+
+Decrement: -=
 
 Mutations are:
 
-- Explicit
-- Conflict-checked
-- Only applied by the runtime (never during evaluation)
+Explicit
 
+Conflict-checked
 
-## Execution Modes
+Only applied by the runtime (never during evaluation)
 
+Execution Modes
 IntentLang supports three safe-by-default execution modes:
 
-| Mode   | Evaluates rules | Returns planned effects | Applies changes to state |
-|--------|------------------|---------------------------|---------------------------|
-| `dry`  | Yes              | No                        | No                        |
-| `plan` | Yes              | Yes                       | No                        |
-| `apply`| Yes              | Yes                       | Yes                       |
+Mode	Evaluates rules	Returns planned effects	Applies changes
+dry	Yes	No	No
+plan	Yes	Yes	No
+apply	Yes	Yes	Yes
 
-
-
-## Conflict Detection
-
-If two rules try to mutate the **same path** in a single run, IntentLang raises a **conflict error** instead of silently overwriting.
+Conflict Detection
+If two rules try to mutate the same path in a single run, IntentLang raises a
+conflict error instead of silently overwriting.
 
 This guarantees:
 
-- Determinism
-- Predictability
-- Safety
+Determinism
 
+Predictability
 
-## Use Cases
+Safety
 
+Use Cases
 IntentLang is well-suited for:
 
-- Feature flags & rollouts
-- Permissions & role-based access control
-- Business rules & workflows
-- Pricing & discount logic
-- Game mechanics & progression rules
-- Policy & compliance engines
-- AI output guardrails & safety filters
+Feature flags & rollouts
 
-It is **not** intended to replace general-purpose programming languages.
+Permissions & role-based access control
 
+Business rules & workflows
 
-## Architecture Overview
+Pricing & discount logic
 
-```
+Game mechanics & progression rules
+
+Policy & compliance engines
+
+AI output guardrails & safety filters
+
+It is not intended to replace general-purpose programming languages.
+
+Architecture Overview
+text
+Copy code
 Text (.intent files)
       ↓
 Parser (Lark)
@@ -195,32 +196,30 @@ Evaluator → condition results (true/false)
 Mutation planner → ordered, conflict-checked plan
       ↓
 Runtime (dry / plan / apply)
-```
+Status
+Version: v0.1 (early development)
 
+Language syntax is mostly stable
 
-## Status
+Suitable for experimentation and non-critical real-world use
 
-- **Version**: v0.1 (early development)
-- Language syntax is mostly stable
-- Suitable for experimentation and non-critical real-world use
-- API and tooling are still evolving
+API and tooling are still evolving
 
+License
+MIT License — free for personal and commercial use.
 
-## License
-
-[MIT License](LICENSE) — free for personal and commercial use.
-
-
-## Philosophy
-
-IntentLang is intentionally **small**.
+Philosophy
+IntentLang is intentionally small.
 
 It aims to be:
 
-- Understandable
-- Composable
-- Safe
-- Boring (in the best possible way)
+Understandable
 
-**Complexity belongs in applications.**  
-**Decisions belong in rules.**
+Composable
+
+Safe
+
+Boring (in the best possible way)
+
+Complexity belongs in applications.
+Decisions belong in rules.
