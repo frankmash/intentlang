@@ -224,8 +224,3 @@ It aims to be:
 
 **Complexity belongs in applications.**  
 **Decisions belong in rules.**
-<<<<<<< HEAD
-```
-=======
-```
->>>>>>> eb452d1c4b02af4772ce508f0c5998c54d13120e
