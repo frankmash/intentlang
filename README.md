@@ -167,13 +167,3 @@ It aims to be:
 **Complexity belongs in applications.**  
 **Decisions belong in rules.**
 ```
-
-Feel free to copy-paste the content above into your `README.md` file.
-
-Let me know if you'd like to add sections like:
-
-- Installation
-- Quickstart
-- Syntax reference
-- Roadmap
-- Comparison table (e.g. vs OPA, JsonLogic, etc.)
