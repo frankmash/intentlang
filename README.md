@@ -1,6 +1,3 @@
-Here is a cleaned-up and properly structured version of your **README.md** content:
-
-```markdown
 # IntentLang
 
 **IntentLang** is a lightweight, rule-based programming language designed for expressing  
@@ -24,7 +21,6 @@ Benefits:
 - Easier to audit
 - Friendlier to non-developers (business analysts, compliance, product, legal, etc.)
 
----
 
 ## Example
 
