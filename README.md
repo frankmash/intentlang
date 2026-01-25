@@ -234,4 +234,3 @@ Goals:
 
 **Complexity belongs in applications.**  
 **Decisions belong in rules.**
-```
