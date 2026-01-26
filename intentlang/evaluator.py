@@ -21,6 +21,22 @@ def get_value_from_path(context, path):
     return current
 
 
+def path_exists(context, path):
+    """
+    Safely check whether a dotted path exists in the context.
+    """
+    parts = path.split(".")
+    current = context
+
+    for part in parts:
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        else:
+            return False
+
+    return True
+
+
 def eval_comparison(expr: Comparison, context):
     left = get_value_from_path(context, expr.path)
     right = expr.value
