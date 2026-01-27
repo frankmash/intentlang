@@ -1,5 +1,6 @@
 from lark import Transformer
 from .node import Rule, Comparison, And, Or, Mutation
+from .node import FunctionCall
 
 
 class ToAST(Transformer):
@@ -51,3 +52,9 @@ class ToAST(Transformer):
     def rule(self, items):
         name, condition, mutations = items
         return Rule(name, condition, mutations)
+    
+    def function_call(self, items):
+        name = str(items[0])
+        args = items[1:] if len(items) > 1 else []
+        return FunctionCall(name, args)
+

@@ -20,10 +20,18 @@ then: "then" mutation+
 ?expr: expr "and" expr   -> and_expr
      | expr "or" expr    -> or_expr
      | comparison
+     | function_call
      | "(" expr ")"
 
 comparison: path COMP_OP value
 
+function_call: NAME "(" [arguments] ")"
+
+arguments: expr ("," expr)*
+
+// ============================
+// OPERATORS
+// ============================
 
 COMP_OP: "==" | "!=" | ">=" | "<=" | ">" | "<"
 
