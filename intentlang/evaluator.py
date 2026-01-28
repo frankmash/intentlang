@@ -1,4 +1,4 @@
-from .node import Comparison, And, Or
+from .node import Comparison, And, Or, FunctionCall
 
 
 class EvaluationError(Exception):
@@ -58,6 +58,24 @@ def eval_comparison(expr: Comparison, context):
     raise EvaluationError(f"Unknown operator '{op}'")
 
 
+def eval_function_call(expr: FunctionCall, context):
+    name = expr.name
+    args = expr.args
+
+    if name == "exists":
+        if len(args) != 1:
+            raise EvaluationError("exists() expects exactly one argument")
+
+        arg = args[0]
+
+        if not isinstance(arg, str):
+            raise EvaluationError("exists() argument must be a path")
+
+        return path_exists(context, arg)
+
+    raise EvaluationError(f"Unknown function '{name}'")
+
+
 def evaluate(expr, context):
     """
     Evaluate any expression node.
@@ -72,5 +90,8 @@ def evaluate(expr, context):
 
     if isinstance(expr, Or):
         return evaluate(expr.left, context) or evaluate(expr.right, context)
+
+    if isinstance(expr, FunctionCall):
+        return eval_function_call(expr, context)
 
     raise EvaluationError(f"Unknown expression type: {type(expr)}")
