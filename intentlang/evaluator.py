@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from .node import Comparison, And, Or, FunctionCall
 
 
@@ -6,9 +7,6 @@ class EvaluationError(Exception):
 
 
 def get_value_from_path(context, path):
-    """
-    Resolve dotted paths like 'user.age' from a nested dict.
-    """
     parts = path.split(".")
     current = context
 
@@ -22,9 +20,6 @@ def get_value_from_path(context, path):
 
 
 def path_exists(context, path):
-    """
-    Safely check whether a dotted path exists in the context.
-    """
     parts = path.split(".")
     current = context
 
@@ -37,10 +32,30 @@ def path_exists(context, path):
     return True
 
 
+def parse_datetime(value):
+    """
+    Accept datetime or ISO-8601 string.
+    """
+    if isinstance(value, datetime):
+        return value
+
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value)
+        except ValueError:
+            raise EvaluationError(f"Invalid datetime string: {value}")
+
+    return value
+
+
 def eval_comparison(expr: Comparison, context):
     left = get_value_from_path(context, expr.path)
     right = expr.value
     op = expr.operator
+
+    # Normalize datetimes if needed
+    left = parse_datetime(left)
+    right = parse_datetime(right)
 
     if op == "==":
         return left == right
@@ -67,21 +82,21 @@ def eval_function_call(expr: FunctionCall, context):
             raise EvaluationError("exists() expects exactly one argument")
 
         arg = args[0]
-
         if not isinstance(arg, str):
             raise EvaluationError("exists() argument must be a path")
 
         return path_exists(context, arg)
 
+    if name == "now":
+        if args:
+            raise EvaluationError("now() takes no arguments")
+
+        return datetime.now(timezone.utc)
+
     raise EvaluationError(f"Unknown function '{name}'")
 
 
 def evaluate(expr, context):
-    """
-    Evaluate any expression node.
-    Returns True or False.
-    """
-
     if isinstance(expr, Comparison):
         return eval_comparison(expr, context)
 
