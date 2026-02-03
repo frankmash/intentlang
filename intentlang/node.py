@@ -11,9 +11,9 @@ class Expr:
 
 @dataclass
 class Comparison(Expr):
-    path: str
+    left: Expr
     operator: str
-    value: Any
+    right: Expr
 
 
 @dataclass
@@ -26,6 +26,12 @@ class And(Expr):
 class Or(Expr):
     left: Expr
     right: Expr
+
+
+@dataclass
+class FunctionCall(Expr):
+    name: str
+    args: List[Expr]
 
 
 # ========= MUTATIONS =========
@@ -44,8 +50,3 @@ class Rule:
     name: str
     condition: Expr
     mutations: List[Mutation]
-
-class FunctionCall:
-    def __init__(self, name, args):
-        self.name = name
-        self.args = args

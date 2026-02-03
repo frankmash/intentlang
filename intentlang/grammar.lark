@@ -17,15 +17,22 @@ then: "then" mutation+
 // EXPRESSIONS (READ-ONLY)
 // ============================
 
-?expr: expr "and" expr   -> and_expr
-     | expr "or" expr    -> or_expr
-     | comparison
-     | function_call
-     | "(" expr ")"
+?expr: or_expr
 
-comparison: path COMP_OP value
+?or_expr: and_expr
+        | or_expr "or" and_expr   -> or_expr
 
-function_call: NAME "(" [arguments] ")"
+?and_expr: comparison
+         | and_expr "and" comparison -> and_expr
+
+comparison: operand COMP_OP operand
+
+?operand: function_call
+         | path
+         | value
+         | "(" expr ")"
+
+function_call: IDENT "(" [arguments] ")"
 
 arguments: expr ("," expr)*
 
@@ -40,7 +47,6 @@ COMP_OP: "==" | "!=" | ">=" | "<=" | ">" | "<"
 // ============================
 
 mutation: path MUT_OP value
-
 
 MUT_OP: "=" | "+=" | "-="
 

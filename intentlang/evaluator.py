@@ -49,13 +49,10 @@ def parse_datetime(value):
 
 
 def eval_comparison(expr: Comparison, context):
-    left = get_value_from_path(context, expr.path)
-    right = expr.value
-    op = expr.operator
+    left = evaluate(expr.left, context)
+    right = evaluate(expr.right, context)
 
-    # Normalize datetimes if needed
-    left = parse_datetime(left)
-    right = parse_datetime(right)
+    op = expr.operator
 
     if op == "==":
         return left == right
@@ -71,6 +68,7 @@ def eval_comparison(expr: Comparison, context):
         return left <= right
 
     raise EvaluationError(f"Unknown operator '{op}'")
+
 
 
 def eval_function_call(expr: FunctionCall, context):
@@ -97,6 +95,14 @@ def eval_function_call(expr: FunctionCall, context):
 
 
 def evaluate(expr, context):
+    # Literal values
+    if isinstance(expr, (int, float, bool)):
+        return expr
+
+    # Path reference
+    if isinstance(expr, str):
+        return get_value_from_path(context, expr)
+
     if isinstance(expr, Comparison):
         return eval_comparison(expr, context)
 
@@ -110,3 +116,4 @@ def evaluate(expr, context):
         return eval_function_call(expr, context)
 
     raise EvaluationError(f"Unknown expression type: {type(expr)}")
+
