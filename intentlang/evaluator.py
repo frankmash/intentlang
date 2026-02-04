@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 from .node import Comparison, And, Or, FunctionCall
+from collections.abc import Iterable
+
 
 
 class EvaluationError(Exception):
@@ -75,6 +77,7 @@ def eval_function_call(expr: FunctionCall, context):
     name = expr.name
     args = expr.args
 
+    # -------- exists(path) --------
     if name == "exists":
         if len(args) != 1:
             raise EvaluationError("exists() expects exactly one argument")
@@ -85,13 +88,40 @@ def eval_function_call(expr: FunctionCall, context):
 
         return path_exists(context, arg)
 
+    # -------- now() --------
     if name == "now":
         if args:
             raise EvaluationError("now() takes no arguments")
 
         return datetime.now(timezone.utc)
 
+    # -------- len(value) --------
+    if name == "len":
+        if len(args) != 1:
+            raise EvaluationError("len() expects exactly one argument")
+
+        value = evaluate(args[0], context)
+
+        if not isinstance(value, (str, list, dict, tuple)):
+            raise EvaluationError("len() argument must be a collection or string")
+
+        return len(value)
+
+    # -------- contains(collection, value) --------
+    if name == "contains":
+        if len(args) != 2:
+            raise EvaluationError("contains() expects exactly two arguments")
+
+        collection = evaluate(args[0], context)
+        value = evaluate(args[1], context)
+
+        if not isinstance(collection, Iterable):
+            raise EvaluationError("contains() first argument must be a collection")
+
+        return value in collection
+
     raise EvaluationError(f"Unknown function '{name}'")
+
 
 
 def evaluate(expr, context):
