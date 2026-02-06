@@ -1,12 +1,10 @@
 from lark import Lark
-from transform import ToAST
-from runtime import run
-
-with open("grammar.lark") as f:
-    grammar = f.read()
+from intentlang.transform import ToAST
+from intentlang.runtime import run
+from intentlang.grammar import GRAMMAR
 
 parser = Lark(
-    grammar,
+    GRAMMAR,
     start="start",
     parser="lalr",
     transformer=ToAST()
