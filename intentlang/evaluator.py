@@ -145,11 +145,13 @@ def evaluate(expr, context):
 
     if isinstance(expr, FunctionCall):
         return eval_function_call(expr, context)
-
-    raise EvaluationError(f"Unknown expression type: {type(expr)}")
     
     if isinstance(expr, Not):
         return not evaluate(expr.expr, context)
+
+    raise EvaluationError(f"Unknown expression type: {type(expr)}")
+    
+    
 
 
 
