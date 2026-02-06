@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from .node import Comparison, And, Or, FunctionCall
 from collections.abc import Iterable
+from .node import Comparison, And, Or, Not, FunctionCall
 
 
 
@@ -146,4 +147,9 @@ def evaluate(expr, context):
         return eval_function_call(expr, context)
 
     raise EvaluationError(f"Unknown expression type: {type(expr)}")
+    
+    if isinstance(expr, Not):
+        return not evaluate(expr.expr, context)
+
+
 

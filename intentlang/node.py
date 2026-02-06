@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Any
+from dataclasses import dataclass
 
 
 # ========= EXPRESSIONS =========
@@ -50,3 +51,8 @@ class Rule:
     name: str
     condition: Expr
     mutations: List[Mutation]
+
+
+@dataclass
+class Not(Expr):
+    expr: Expr

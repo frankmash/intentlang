@@ -1,5 +1,6 @@
 from lark import Transformer
 from .node import Rule, Comparison, And, Or, Mutation, FunctionCall
+from .node import Rule, Comparison, And, Or, Not, Mutation, FunctionCall
 
 
 class ToAST(Transformer):
@@ -58,3 +59,7 @@ class ToAST(Transformer):
         condition = items[1]
         mutations = items[2]
         return Rule(name, condition, mutations)
+    
+    def not_expr(self, items):
+        return Not(items[0])
+

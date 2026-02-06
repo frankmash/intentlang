@@ -22,8 +22,11 @@ then: "then" mutation+
 ?or_expr: and_expr
         | or_expr "or" and_expr   -> or_expr
 
-?and_expr: comparison
-         | and_expr "and" comparison -> and_expr
+?and_expr: not_expr
+         | and_expr "and" not_expr -> and_expr
+
+?not_expr: "not" not_expr         -> not_expr
+         | comparison
 
 comparison: operand COMP_OP operand
 
