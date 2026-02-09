@@ -150,6 +150,44 @@ def evaluate(expr, context):
         return not evaluate(expr.expr, context)
 
     raise EvaluationError(f"Unknown expression type: {type(expr)}")
+
+def explain(expr, context):
+    """
+    Evaluate an expression and return (result, explanation_string)
+    """
+
+    if isinstance(expr, Comparison):
+        left = evaluate(expr.left, context)
+        right = evaluate(expr.right, context)
+        op = expr.operator
+
+        result = eval_comparison(expr, context)
+        return result, f"{left} {op} {right} → {result}"
+
+    if isinstance(expr, And):
+        l_res, l_exp = explain(expr.left, context)
+        r_res, r_exp = explain(expr.right, context)
+        result = l_res and r_res
+        return result, f"({l_exp}) and ({r_exp}) → {result}"
+
+    if isinstance(expr, Or):
+        l_res, l_exp = explain(expr.left, context)
+        r_res, r_exp = explain(expr.right, context)
+        result = l_res or r_res
+        return result, f"({l_exp}) or ({r_exp}) → {result}"
+
+    if isinstance(expr, Not):
+        res, exp = explain(expr.expr, context)
+        return not res, f"not ({exp}) → {not res}"
+
+    if isinstance(expr, FunctionCall):
+        value = evaluate(expr, context)
+        return value, f"{expr.name}(...) → {value}"
+
+    # literals & paths
+    value = evaluate(expr, context)
+    return bool(value), f"{expr} → {value}"
+
     
     
 
