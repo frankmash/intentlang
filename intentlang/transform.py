@@ -16,7 +16,6 @@ class ToAST(Transformer):
     def then(self, items):
         return items
 
-    # ---------- PRIMITIVES ----------
     def STRING(self, s):
         return s[1:-1]
 
